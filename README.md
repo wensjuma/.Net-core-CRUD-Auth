@@ -13,4 +13,7 @@ run `dotnet ef update database`
 `dotnet build`
 # 6. Run app
 `dotnet run`
-# 7. Open Postman and test your app 
+# 7. Open Postman and test your app;
+
+Author
+wensjuma
