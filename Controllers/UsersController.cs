@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using WEB_API.models;
 using WEB_API.Services;
+using System;
 
 namespace WEB_API.Controllers
 {
@@ -12,11 +13,15 @@ namespace WEB_API.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
+        private readonly StartupDbContext _context;
+        // +private readonly RandomNumberGenerator  _random;
         private IUserService _userService;
 
-        public UsersController(IUserService userService)
+
+        public UsersController(IUserService userService, StartupDbContext context)
         {
             _userService = userService;
+            _context = context;
         }
 
         [AllowAnonymous]
@@ -26,7 +31,7 @@ namespace WEB_API.Controllers
             var user = _userService.Authenticate(model.Username, model.Password);
 
             if (user == null)
-                return BadRequest(new { message = "Incorrect credentials supplied" });
+                return BadRequest(new { message = "Username or password is incorrect" });
 
             return Ok(user);
         }
@@ -38,6 +43,31 @@ namespace WEB_API.Controllers
         {
             var users = _userService.GetAll();
             return Ok(users);
+        }
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public IActionResult Create(Users user, string password)
+        {
+            var userExists = _context.Users.FirstOrDefault(x => x.Username == user.Username);
+
+            
+            if (userExists != null)
+            {
+               
+               //ModelState.AddModelError("Username", "Username taken");
+                 return BadRequest(new { message = "Username is already taken!" });
+            }
+            else{
+            var _userdetails = new Users
+            {
+                FirstName = user.FirstName,
+                Username = user.Username,
+                Password = user.Password
+            };
+            _context.Users.Add(_userdetails);
+            _context.SaveChanges();
+            return CreatedAtAction("GetAll", new Users { Id = user.Id }, user);
+            }
         }
 
     }

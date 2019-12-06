@@ -9,8 +9,7 @@ namespace WEB_API.Controllers
     [Authorize]
     
     [Route("api/[controller]")]
-    [ApiController]
-    
+    [ApiController] 
     public class StartupController : ControllerBase
     {
         private readonly StartupDbContext _context;
@@ -23,7 +22,6 @@ namespace WEB_API.Controllers
             return Ok(result);
             // return new string[] { "one", "two", "three", "four" };
         }
-
         //GET /api/startup/1
         [HttpGet("{id}")]
         public ActionResult<Startup> StartFindOne(int id)
@@ -44,7 +42,6 @@ namespace WEB_API.Controllers
             _context.StartupItems.Add(startup);
             _context.SaveChanges();
              return CreatedAtAction("Start", new Startup_db{Id = startup.Id}, startup);
-
         }
                 //PUT:      api/startup/n
         [HttpPut("{id}")]
